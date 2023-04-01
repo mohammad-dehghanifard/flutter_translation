@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_translation_demo/core/style/text_style.dart';
 import 'package:flutter_translation_demo/core/widgets/app_bar/app_bar_widget.dart';
+import 'package:flutter_translation_demo/core/widgets/drawer_item/drawer_item_widget.dart';
 import 'package:flutter_translation_demo/screens/translation/translation_screen.dart';
 import 'package:flutter_translation_demo/screens/words_scanner/wods_scanner_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+
+class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return  Directionality(
@@ -14,13 +22,16 @@ class HomeScreen extends StatelessWidget {
       child: DefaultTabController(
         length: 2,
         child: Scaffold(
+          key: _globalKey,
           appBar: CustomAppBar.mainAppBar(
            backGroundColor: Colors.blueAccent,
           elevation: 0,
           title: "مترجم آنلاین",
           textStyle: AppTextStyle.appBarTitle,
           leading: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                _globalKey.currentState!.openDrawer();
+              },
               icon: const Icon(Icons.menu)),
           actions: [
             IconButton(
@@ -35,6 +46,52 @@ class HomeScreen extends StatelessWidget {
             ],
           )
       ),
+          drawer: Drawer(
+            child: ListView(
+              children:  [
+                UserAccountsDrawerHeader(
+                    accountName:  Text('محمد دهقانی فرد',style: AppTextStyle.subTitle.apply(color: Colors.white)),
+                    accountEmail:  Text('info@dehghanifard.ir',style: AppTextStyle.subTitle.apply(color: Colors.white)),
+                    currentAccountPicture: ClipRRect(
+                      borderRadius: BorderRadius.circular(32),
+                      child: Image.asset('assets/images/logo.jpg'),
+                    )),
+                //info
+                DrawerItem(
+                  onTap: () {
+
+                  },
+                  title: "درباره ما",
+                    leading: const Icon(Icons.info),
+                  textStyle: AppTextStyle.subTitle,
+                ),
+                DrawerItem(
+                  onTap: () {
+
+                  },
+                  title: "ارتباط با ما",
+                    leading: const Icon(Icons.send),
+                  textStyle: AppTextStyle.subTitle,
+                ),
+                DrawerItem(
+                  onTap: () {
+
+                  },
+                  title: "ثبت نظر",
+                    leading: const Icon(Icons.comment),
+                  textStyle: AppTextStyle.subTitle,
+                ),
+                DrawerItem(
+                  onTap: () {
+
+                  },
+                  title: "اشتراک گذاری برنامه",
+                    leading: const Icon(Icons.share),
+                  textStyle: AppTextStyle.subTitle,
+                ),
+              ],
+            ),
+          ),
           body: const TabBarView(
             children: [
               TranslationScreen(),
