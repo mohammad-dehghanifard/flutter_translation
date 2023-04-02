@@ -5,16 +5,11 @@ import 'package:flutter_translation_demo/core/widgets/drawer_item/drawer_item_wi
 import 'package:flutter_translation_demo/screens/translation/translation_screen.dart';
 import 'package:flutter_translation_demo/screens/words_scanner/wods_scanner_screen.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class HomeScreen extends StatelessWidget {
+   HomeScreen({Key? key}) : super(key: key);
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-
-class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return  Directionality(
@@ -56,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(32),
                       child: Image.asset('assets/images/logo.jpg'),
                     )),
-                //info
+                //درباره ما
                 DrawerItem(
                   onTap: () {
 
@@ -65,6 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     leading: const Icon(Icons.info),
                   textStyle: AppTextStyle.subTitle,
                 ),
+                // ارتباط با ما
                 DrawerItem(
                   onTap: () {
 
@@ -73,6 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     leading: const Icon(Icons.send),
                   textStyle: AppTextStyle.subTitle,
                 ),
+                // ثبت نظر
                 DrawerItem(
                   onTap: () {
 
@@ -81,6 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     leading: const Icon(Icons.comment),
                   textStyle: AppTextStyle.subTitle,
                 ),
+                // اشتراک گذاری برنامه
                 DrawerItem(
                   onTap: () {
 
