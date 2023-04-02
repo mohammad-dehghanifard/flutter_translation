@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translation_demo/core/style/text_style.dart';
 
@@ -9,6 +10,9 @@ class TranslationScreen extends StatefulWidget {
 }
 
 class _TranslationScreenState extends State<TranslationScreen> {
+
+  final TextEditingController _textEditingController = TextEditingController();
+
   //لیست های زبان مبدا و مقصد
   List<String> originLanguages = [
     'فارسی',
@@ -38,7 +42,7 @@ class _TranslationScreenState extends State<TranslationScreen> {
       width: size.width,
       height: size.height,
       margin: const EdgeInsets.all(8),
-      padding: const EdgeInsets.fromLTRB(12, 16, 12, 8),
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -57,13 +61,14 @@ class _TranslationScreenState extends State<TranslationScreen> {
             ],
           ),
           SizedBox(height: size.height * 0.02),
+          // Dropdowns
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               // origin language Dropdown
               SizedBox(
                 width: size.width / 3.8,
-                height: size.height / 4.8,
+                height: size.height / 7.5,
                 child: DropdownButtonFormField<String>(
                     value: selectedOriginLanguage,
                     items: originLanguages.map((item) {
@@ -92,7 +97,7 @@ class _TranslationScreenState extends State<TranslationScreen> {
               //destination language Dropdown
               SizedBox(
                 width: size.width / 3.8,
-                height: size.height / 4.8,
+                height: size.height / 7.5,
                 child: DropdownButtonFormField<String>(
                     value: selectedDestinationLanguages,
                     items: destinationLanguages.map((item) {
@@ -117,6 +122,54 @@ class _TranslationScreenState extends State<TranslationScreen> {
                       ),
                     ),
                    ),
+              ),
+            ],
+          ),
+          // text field
+          Row(
+            children: [
+              // TEXT field
+              Expanded(
+                child: TextField(
+                  controller: _textEditingController,
+                  maxLines: 4,
+                  style: AppTextStyle.subTitle,
+                  onChanged: (text) {},
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey[300],
+                    hintText: "لطفا متن خود را وارد کنید...",
+                    hintStyle: AppTextStyle.subTitle.apply(color: Colors.grey[600]),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none
+                    ),
+                  ),
+
+                ),
+              ),
+              // icons
+              Column(
+                children: [
+                  IconButton(
+                      onPressed: () {
+                          setState(() {
+                            _textEditingController.clear();
+                          });
+                      },
+                      iconSize: 26,
+                      icon: const Icon(CupertinoIcons.clear,color: Colors.red,)),
+                  IconButton(
+                      onPressed: () {
+
+                      },
+                      iconSize: 26,
+                      icon: const Icon(Icons.volume_up,color: Colors.blueAccent,)),
+                ],
               ),
             ],
           )
