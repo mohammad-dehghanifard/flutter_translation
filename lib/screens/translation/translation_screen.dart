@@ -55,143 +55,146 @@ class _TranslationScreenState extends State<TranslationScreen> {
             BoxShadow(color: Colors.black.withOpacity(0.3),blurRadius: 20)
           ]
         ),
-        child: Column(
-          children: [
-            // text titles
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Text("زبان مبدا",style: AppTextStyle.title),
-                Text("زبان مقصد",style: AppTextStyle.title),
-              ],
-            ),
-            SizedBox(height: size.height * 0.02),
-            // Dropdowns
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                // origin language Dropdown
-                SizedBox(
-                  width: size.width / 3.8,
-                  height: size.height / 7.5,
-                  child: DropdownButtonFormField<String>(
-                      value: selectedOriginLanguage,
-                      items: originLanguages.map((item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          alignment: Alignment.bottomCenter,
-                          child: Text(item,style: AppTextStyle.subTitle.copyWith(fontSize: 14)));
-                      }).toList(),
-                      onChanged: (value) => setState(() {selectedOriginLanguage = value!;}),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              // text titles
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Text("زبان مبدا",style: AppTextStyle.title),
+                  Text("زبان مقصد",style: AppTextStyle.title),
+                ],
+              ),
+              SizedBox(height: size.height * 0.02),
+              // Dropdowns
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  // origin language Dropdown
+                  SizedBox(
+                    width: size.width / 3.8,
+                    height: size.height / 7.5,
+                    child: DropdownButtonFormField<String>(
+                        value: selectedOriginLanguage,
+                        items: originLanguages.map((item) {
+                          return DropdownMenuItem<String>(
+                            value: item,
+                            alignment: Alignment.bottomCenter,
+                            child: Text(item,style: AppTextStyle.subTitle.copyWith(fontSize: 14)));
+                        }).toList(),
+                        onChanged: (value) => setState(() {selectedOriginLanguage = value!;}),
+                        style: AppTextStyle.subTitle,
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 12,vertical: 8),
+                          filled: true,
+                          fillColor: Colors.grey[300],
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                       ),
+                  ),
+                  //destination language Dropdown
+                  SizedBox(
+                    width: size.width / 3.8,
+                    height: size.height / 7.5,
+                    child: DropdownButtonFormField<String>(
+                        value: selectedDestinationLanguages,
+                        items: destinationLanguages.map((item) {
+                          return DropdownMenuItem<String>(
+                            value: item,
+                            alignment: Alignment.bottomCenter,
+                            child: Text(item,style: AppTextStyle.subTitle.copyWith(fontSize: 14)));
+                        }).toList(),
+                        onChanged: (value) => setState(() {selectedDestinationLanguages = value!;}),
+                        style: AppTextStyle.subTitle,
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 12,vertical: 8),
+                          filled: true,
+                          fillColor: Colors.grey[300],
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                       ),
+                  ),
+                ],
+              ),
+              // text field
+              Row(
+                children: [
+                  // TEXT field
+                  Expanded(
+                    child: TextField(
+                      controller: _textEditingController,
+                      maxLines: 4,
                       style: AppTextStyle.subTitle,
+                      onChanged: (text) {},
                       decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12,vertical: 8),
                         filled: true,
                         fillColor: Colors.grey[300],
+                        hintText: "لطفا متن خود را وارد کنید...",
+                        hintStyle: AppTextStyle.subTitle.apply(color: Colors.grey[600]),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                     ),
-                ),
-                //destination language Dropdown
-                SizedBox(
-                  width: size.width / 3.8,
-                  height: size.height / 7.5,
-                  child: DropdownButtonFormField<String>(
-                      value: selectedDestinationLanguages,
-                      items: destinationLanguages.map((item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          alignment: Alignment.bottomCenter,
-                          child: Text(item,style: AppTextStyle.subTitle.copyWith(fontSize: 14)));
-                      }).toList(),
-                      onChanged: (value) => setState(() {selectedDestinationLanguages = value!;}),
-                      style: AppTextStyle.subTitle,
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12,vertical: 8),
-                        filled: true,
-                        fillColor: Colors.grey[300],
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                     ),
-                ),
-              ],
-            ),
-            // text field
-            Row(
-              children: [
-                // TEXT field
-                Expanded(
-                  child: TextField(
-                    controller: _textEditingController,
-                    maxLines: 4,
-                    style: AppTextStyle.subTitle,
-                    onChanged: (text) {},
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.grey[300],
-                      hintText: "لطفا متن خود را وارد کنید...",
-                      hintStyle: AppTextStyle.subTitle.apply(color: Colors.grey[600]),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none
-                      ),
-                      enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide.none
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none
+                        ),
                       ),
+
                     ),
-
                   ),
-                ),
-                // icons
-                Column(
-                  children: [
-                    IconButton(
-                        onPressed: () {
-                            setState(() {
-                              _textEditingController.clear();
-                            });
-                        },
-                        iconSize: 26,
-                        icon: const Icon(CupertinoIcons.clear,color: Colors.red,)),
-                    IconButton(
-                        onPressed: () {
+                  // icons
+                  Column(
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                              setState(() {
+                                _textEditingController.clear();
+                              });
+                          },
+                          iconSize: 26,
+                          icon: const Icon(CupertinoIcons.clear,color: Colors.red,)),
+                      IconButton(
+                          onPressed: () {
 
-                        },
-                        iconSize: 26,
-                        icon: const Icon(Icons.volume_up,color: Colors.blueAccent,)),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: size.height * 0.02,),
-            // CupertinoButton
-            SizedBox(
-              width: size.width * 0.8,
-              height: 48,
-              child: CupertinoButton(
-                  color: Colors.blueAccent,
-                  pressedOpacity: 0.8,
-                  onPressed: () {},
-                  child: Text('ترجمه کن !',style: AppTextStyle.title.apply(color: Colors.white)),),
-            ),
-            SizedBox(height: size.height * 0.2,),
-            Text("محل نمایش نتیجه...",style: AppTextStyle.subTitle,)
-          ],
+                          },
+                          iconSize: 26,
+                          icon: const Icon(Icons.volume_up,color: Colors.blueAccent,)),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: size.height * 0.02,),
+              // CupertinoButton
+              SizedBox(
+                width: size.width * 0.8,
+                height: 48,
+                child: CupertinoButton(
+                    color: Colors.blueAccent,
+                    pressedOpacity: 0.8,
+                    onPressed: () {},
+                    child: Text('ترجمه کن !',style: AppTextStyle.title.apply(color: Colors.white)),),
+              ),
+              SizedBox(height: size.height * 0.2,),
+              Text("محل نمایش نتیجه...",style: AppTextStyle.subTitle,)
+            ],
+          ),
         ),
       ),
     );
