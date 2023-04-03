@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_translation_demo/core/service/language_code.dart';
+import 'package:flutter_translation_demo/core/service/translate_api.dart';
 import 'package:flutter_translation_demo/core/style/text_style.dart';
 
 class TranslationScreen extends StatefulWidget {
@@ -33,8 +35,28 @@ class _TranslationScreenState extends State<TranslationScreen> {
     'اسپانیایی',
   ];
 
-   String selectedOriginLanguage = 'فارسی';
-   String selectedDestinationLanguages = 'انگلیسی';
+  // زبان های پیش فرض برای نمایش داخل منو
+  String selectedOriginLanguage = 'فارسی';
+  String selectedDestinationLanguages = 'انگلیسی';
+
+  // متغیر های ارسال کد برای ترجمه
+  String? originLnTranslation = LanguageCodeManagement.languageMap['فارسی'];
+  String? destinationLnTranslation = LanguageCodeManagement.languageMap['انگلیسی'];
+  // متغییر نمایش متن ترجمه شده
+  String resultValue = '';
+
+  translatorText() async {
+    final String fromLnCode = LanguageCodeManagement.getLanguageCode(originLnTranslation!);
+    final String toLnCode = LanguageCodeManagement.getLanguageCode(destinationLnTranslation!);
+    final String text = _textEditingController.text;
+    final result = await TranslateApiService.translatorApi(
+        txt: text,
+        fromLnCode: fromLnCode,
+        toLnCode: toLnCode);
+    setState(() {
+      resultValue = result;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -84,7 +106,12 @@ class _TranslationScreenState extends State<TranslationScreen> {
                             alignment: Alignment.bottomCenter,
                             child: Text(item,style: AppTextStyle.subTitle.copyWith(fontSize: 14)));
                         }).toList(),
-                        onChanged: (value) => setState(() {selectedOriginLanguage = value!;}),
+                        onChanged: (value) => setState(() {
+                          selectedOriginLanguage = value!;
+                          // دسترسی به زبان انتخاب شده جدید توسط کاربر و قرار دادنش داخل متغیر
+                          final String? res = LanguageCodeManagement.languageMap[value];
+                          originLnTranslation = res;
+                        }),
                         style: AppTextStyle.subTitle,
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(horizontal: 12,vertical: 8),
@@ -113,7 +140,12 @@ class _TranslationScreenState extends State<TranslationScreen> {
                             alignment: Alignment.bottomCenter,
                             child: Text(item,style: AppTextStyle.subTitle.copyWith(fontSize: 14)));
                         }).toList(),
-                        onChanged: (value) => setState(() {selectedDestinationLanguages = value!;}),
+                        onChanged: (value) => setState(() {
+                          selectedDestinationLanguages = value!;
+                          // دسترسی به زبان انتخاب شده جدید توسط کاربر و قرار دادنش داخل متغیر
+                          final String? res = LanguageCodeManagement.languageMap[value];
+                          destinationLnTranslation = res;
+                        }),
                         style: AppTextStyle.subTitle,
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(horizontal: 12,vertical: 8),
@@ -188,11 +220,11 @@ class _TranslationScreenState extends State<TranslationScreen> {
                 child: CupertinoButton(
                     color: Colors.blueAccent,
                     pressedOpacity: 0.8,
-                    onPressed: () {},
+                    onPressed: () => translatorText(),
                     child: Text('ترجمه کن !',style: AppTextStyle.title.apply(color: Colors.white)),),
               ),
               SizedBox(height: size.height * 0.2,),
-              Text("محل نمایش نتیجه...",style: AppTextStyle.subTitle,)
+              Text(resultValue,style: AppTextStyle.subTitle,)
             ],
           ),
         ),
