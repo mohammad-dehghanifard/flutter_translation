@@ -1,10 +1,13 @@
 // ignore_for_file: must_be_immutable
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_translation_demo/core/service/translate_api.dart';
 import 'package:flutter_translation_demo/core/style/text_style.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class WordsScannerScreen extends StatefulWidget {
 
@@ -36,8 +39,8 @@ class _WordsScannerScreenState extends State<WordsScannerScreen> {
         setState(() {
           scanning = true;
           imageFile = imagePicker;
-          scanImage(userInputImage: imageFile!);
         });
+        scanImage(userInputImage: imageFile!);
       }
     }catch(e){
       setState(() {
@@ -47,6 +50,7 @@ class _WordsScannerScreenState extends State<WordsScannerScreen> {
       });
     }
   }
+  // اسکن تصویر و تشخیص کلمات داخل عکس
   void scanImage({required XFile userInputImage}) async {
     scanningWords.clear();
     scanningValue = '';
@@ -65,9 +69,21 @@ class _WordsScannerScreenState extends State<WordsScannerScreen> {
         scanningValue += "${line.text}\n";
       }
     }
+    await translateWords();
+    scanning = false;
     setState(() {});
   }
+  Future<void> translateWords() async {
+    for(var wordKey in scanningWords.keys){
+      final translatedWord = await TranslateApiService.translatorApi(txt: wordKey, fromLnCode: "en", toLnCode: "fa");
+      scanningWords.update(wordKey, (value) => translatedWord);
+    }
 
+    for(var value in scanningWords.values) {
+      scanningTranslationValue += "$value\n";
+    }
+    setState(() {});
+  }
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -87,24 +103,46 @@ class _WordsScannerScreenState extends State<WordsScannerScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if(imageFile == null)
             Text("تشخیص کلمات(OCR)",style: AppTextStyle.title.apply(color: Colors.black)),
+
+            if(imageFile == null)
             Text("با کمک این بخش از برنامه میتونید به راحتی لغات موجود داخل تصاویر رو از گالری یا دوربین گوشی خودتون اسکن و ترجمه کنید.",style: AppTextStyle.subTitle),
+
             SizedBox(height: size.height * 0.04,),
+
             // image
-            Center(child: Image.asset("assets/gifs/scanning.gif",height: 132,)),
+            imageFile == null? Center(child: Image.asset("assets/gifs/scanning.gif",height: 132,))
+            :Center(child: Image.file(File(imageFile!.path),height: 260)),
 
             //نمایش نتیجه اسکن
+            scanning?
+            Center(child: Padding(
+              padding: const EdgeInsets.only(top: 12,bottom: 4),
+              child: LoadingAnimationWidget.discreteCircle(color: Colors.blueAccent, size: 32),
+            )) :
             Container(
               margin: const EdgeInsets.fromLTRB(0, 16, 0, 8),
               width: size.width,
               height: 200,
+              padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 14),
               decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(color: Colors.black.withOpacity(0.3),blurRadius: 20)
                     ]
-                )
+                ),
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(scanningTranslationValue,style: AppTextStyle.subTitle.apply(color: Colors.redAccent)),
+                    Text(scanningValue,style: AppTextStyle.subTitle),
+                  ],
+                ),
+              ),
             ),
             SizedBox(height:  size.height * 0.03,),
             // buttons
@@ -112,7 +150,7 @@ class _WordsScannerScreenState extends State<WordsScannerScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
               ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () => getImage(imageSource: ImageSource.camera),
                   style: ButtonStyle(
                     minimumSize: MaterialStatePropertyAll(Size(size.width * 0.06,size.height * 0.06)),
                     overlayColor: const MaterialStatePropertyAll(Colors.transparent),
@@ -131,7 +169,7 @@ class _WordsScannerScreenState extends State<WordsScannerScreen> {
                     const Icon(Icons.camera)
                   ],)),
               ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () => getImage(imageSource: ImageSource.gallery),
                   style: ButtonStyle(
                     minimumSize: MaterialStatePropertyAll(Size(size.width * 0.06,size.height * 0.06)),
                     overlayColor: const MaterialStatePropertyAll(Colors.transparent),
