@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_translation_demo/core/service/language_code.dart';
 import 'package:flutter_translation_demo/core/service/translate_api.dart';
 import 'package:flutter_translation_demo/core/style/text_style.dart';
+import 'package:text_to_speech/text_to_speech.dart';
 
 class TranslationScreen extends StatefulWidget {
   const TranslationScreen({Key? key}) : super(key: key);
@@ -44,11 +45,15 @@ class _TranslationScreenState extends State<TranslationScreen> {
   String? destinationLnTranslation = LanguageCodeManagement.languageMap['انگلیسی'];
   // متغییر نمایش متن ترجمه شده
   String resultValue = '';
-
-  translatorText() async {
+  // تابع ترجمه متن
+  void translatorText() async {
+    // دریافت کد کشور مبدا
     final String fromLnCode = LanguageCodeManagement.getLanguageCode(originLnTranslation!);
+    // دریافت کد کشور مقصد
     final String toLnCode = LanguageCodeManagement.getLanguageCode(destinationLnTranslation!);
+    // اماده کردن متن کاربر برای ترجمه
     final String text = _textEditingController.text;
+    // ترجمه متن و نمایش به کاربر
     final result = await TranslateApiService.translatorApi(
         txt: text,
         fromLnCode: fromLnCode,
@@ -56,6 +61,12 @@ class _TranslationScreenState extends State<TranslationScreen> {
     setState(() {
       resultValue = result;
     });
+  }
+  // تابع تبدیل نوشتار به متن
+  void convertTextToSpeech({required String languageCode,required String text}){
+    TextToSpeech tts = TextToSpeech();
+    tts.setLanguage(languageCode);
+    tts.speak(text);
   }
   @override
   Widget build(BuildContext context) {
@@ -195,17 +206,11 @@ class _TranslationScreenState extends State<TranslationScreen> {
                   Column(
                     children: [
                       IconButton(
-                          onPressed: () {
-                              setState(() {
-                                _textEditingController.clear();
-                              });
-                          },
+                          onPressed: () => _textEditingController.clear(),
                           iconSize: 26,
                           icon: const Icon(CupertinoIcons.clear,color: Colors.red,)),
                       IconButton(
-                          onPressed: () {
-
-                          },
+                          onPressed: () => convertTextToSpeech(languageCode: 'en-US',text: _textEditingController.text),
                           iconSize: 26,
                           icon: const Icon(Icons.volume_up,color: Colors.blueAccent,)),
                     ],
