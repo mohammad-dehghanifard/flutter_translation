@@ -4,6 +4,9 @@ import 'package:flutter_translation_demo/core/service/language_code.dart';
 import 'package:flutter_translation_demo/core/service/translate_api.dart';
 import 'package:flutter_translation_demo/core/style/text_style.dart';
 import 'package:text_to_speech/text_to_speech.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:avatar_glow/avatar_glow.dart';
+
 
 class TranslationScreen extends StatefulWidget {
   const TranslationScreen({Key? key}) : super(key: key);
@@ -40,6 +43,11 @@ class _TranslationScreenState extends State<TranslationScreen> {
   String selectedOriginLanguage = 'فارسی';
   String selectedDestinationLanguages = 'انگلیسی';
 
+  //  برای تشخیص این که کاربر در حال صحبت کردن هست یا خیر
+  bool listening = false;
+  // متن تشخیص داده شده از گفتار کاربر رو نگهداری میکنه
+  String userSpeechText = '';
+
   // متغیر های ارسال کد برای ترجمه
   String? originLnTranslation = LanguageCodeManagement.languageMap['فارسی'];
   String? destinationLnTranslation = LanguageCodeManagement.languageMap['انگلیسی'];
@@ -68,13 +76,46 @@ class _TranslationScreenState extends State<TranslationScreen> {
     tts.setLanguage(languageCode);
     tts.speak(text);
   }
+  // تابع تبدیل گفتار به متن
+  void convertSpeechToText() async {
+    stt.SpeechToText speechToText = stt.SpeechToText();
+    if(!listening){
+      bool available = await speechToText.initialize();
+      if(available){
+        setState(() => listening = true);
+        speechToText.listen(
+          onResult: (result) {
+            setState(() {
+              //مقدار دهی متغیر با کلمات تشخیص داده شده از گفتار کاربر
+              userSpeechText = result.recognizedWords;
+              _textEditingController.text = userSpeechText;
+            });
+          },
+        );
+      }
+    } else{
+      setState(() => listening = false);
+      speechToText.stop();
+    }
+
+  }
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(Icons.mic),
+      floatingActionButton: AvatarGlow(
+        animate: listening,
+        duration: const Duration(milliseconds: 1500),
+        repeatPauseDuration: const Duration(milliseconds: 100),
+        glowColor: Colors.blue.shade900,
+        showTwoGlows: true,
+        repeat: true,
+        endRadius: 40,
+
+        child: FloatingActionButton(
+          onPressed: convertSpeechToText,
+          child:  Icon(listening? Icons.mic : Icons.mic_off_sharp),
+        ),
       ),
       body: Container(
         width: size.width,
