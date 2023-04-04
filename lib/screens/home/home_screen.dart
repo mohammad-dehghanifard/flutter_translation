@@ -90,9 +90,9 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ),
-          body: const TabBarView(
+          body:  TabBarView(
             children: [
-              TranslationScreen(),
+              const TranslationScreen(),
               WordsScannerScreen(),
             ],
           ),
